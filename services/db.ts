@@ -11,15 +11,15 @@ export class TajBusDatabase extends Dexie {
 
   constructor() {
     super('TajBusDB');
-    // Define the database schema and version
+    // تعريف هيكل قاعدة البيانات وإصدارها
     this.version(3).stores({
-      users: '++id, email, name, role', // Indexed fields for user table
-      tickets: '++id, userId, driverId, date, from, to', // Indexed fields for tickets table
-      complaints: '++id, userId, subject, status', // Indexed fields for complaints table
-      drivers: '++id, name, licenseNumber' // Indexed fields for drivers table
+      users: '++id, email, name, role', // الحقول المفهرسة لجدول المستخدمين
+      tickets: '++id, userId, driverId, date, from, to', // الحقول المفهرسة لجدول التذاكر
+      complaints: '++id, userId, subject, status', // الحقول المفهرسة لجدول الشكاوي
+      drivers: '++id, name, licenseNumber' // الحقول المفهرسة لجدول السائقين
     });
 
-    // Seed initial data if tables are empty
+    // إضافة بيانات أولية في حال كانت الجداول فارغة عند التشغيل الأول
     this.on('populate', () => {
       this.drivers.bulkAdd([
         {

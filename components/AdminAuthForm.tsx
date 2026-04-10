@@ -18,7 +18,8 @@ const AdminAuthForm: React.FC<AdminAuthFormProps> = ({ onLogin }) => {
     phone: '', 
     birthDay: '', 
     birthMonth: '', 
-    birthYear: '' 
+    birthYear: '',
+    securityKey: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +60,12 @@ const AdminAuthForm: React.FC<AdminAuthFormProps> = ({ onLogin }) => {
 
         if (!formData.birthDay || !formData.birthMonth || !formData.birthYear) {
           setError('يرجى إدخال تاريخ الميلاد كاملاً');
+          setLoading(false);
+          return;
+        }
+
+        if (!formData.securityKey) {
+          setError('يرجى إدخال كود تفعيل المدير');
           setLoading(false);
           return;
         }
@@ -179,6 +186,19 @@ const AdminAuthForm: React.FC<AdminAuthFormProps> = ({ onLogin }) => {
             onChange={(e) => setFormData({...formData, password: e.target.value})} 
           />
         </div>
+
+        {!isLogin && (
+          <div className="space-y-1">
+            <label className="text-base font-bold text-amber-500 mr-2">كود تفعيل المدير (سري)</label>
+            <input 
+              type="password" 
+              required 
+              placeholder="أدخل الكود السري الممنوح لك"
+              className="w-full p-4 bg-slate-800 rounded-2xl border border-amber-500/30 focus:ring-2 focus:ring-amber-500 outline-none text-white" 
+              onChange={(e) => setFormData({...formData, securityKey: e.target.value})} 
+            />
+          </div>
+        )}
 
         <button 
           type="submit" 

@@ -42,7 +42,7 @@ const DriverDashboard: React.FC<DriverDashboardProps> = ({ driver, onLogout, onN
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row font-tajawal text-white">
-      {/* Sidebar */}
+      {/* القائمة الجانبية (Sidebar) */}
       <aside className="w-full md:w-72 bg-slate-900 border-l border-slate-800 flex flex-col shrink-0">
         <div className="p-8 border-b border-slate-800">
           <div className="flex items-center gap-3 mb-2">
@@ -88,7 +88,7 @@ const DriverDashboard: React.FC<DriverDashboardProps> = ({ driver, onLogout, onN
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* المحتوى الرئيسي (Main Content) */}
       <main className="flex-grow p-6 md:p-10 overflow-auto bg-slate-950">
         <header className="flex justify-between items-center mb-10">
           <div>
@@ -104,7 +104,7 @@ const DriverDashboard: React.FC<DriverDashboardProps> = ({ driver, onLogout, onN
           </button>
         </header>
 
-        {/* Stats Row */}
+        {/* صف الإحصائيات (Stats Row) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {[
             { label: 'إجمالي الرحلات', val: stats.totalTrips, icon: '🛣️', color: 'emerald' },
@@ -124,7 +124,7 @@ const DriverDashboard: React.FC<DriverDashboardProps> = ({ driver, onLogout, onN
           ))}
         </div>
 
-        {/* Tab Content */}
+        {/* محتوى التبويبات (Tab Content) */}
         <div className="animate-fadeIn">
           {activeTab === 'trips' && (
             <div className="bg-slate-900 rounded-[2.5rem] shadow-sm border border-slate-800 overflow-hidden">

@@ -64,7 +64,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
   return (
     <div className="max-w-4xl mx-auto my-4 md:my-8 p-2 md:p-4">
       <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl p-4 md:p-10 border border-gray-100">
-        {/* Progress Stepper */}
+        {/* مؤشر التقدم (Progress Stepper) */}
         <div className="flex justify-between items-center mb-8 md:mb-12 relative px-2 md:px-4">
           <div className="absolute top-1/2 right-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0"></div>
           <div className="absolute top-1/2 right-0 h-1 bg-blue-900 -translate-y-1/2 z-0 transition-all duration-500" style={{ width: `${((step - 1) / 4) * 100}%` }}></div>
@@ -75,7 +75,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
           ))}
         </div>
 
-        {/* Step 1: Destination & Date */}
+        {/* الخطوة 1: الوجهة والتاريخ */}
         {step === 1 && (
           <div className="space-y-6 md:space-y-8 animate-fadeIn">
             <div className="text-center">
@@ -120,7 +120,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
           </div>
         )}
 
-        {/* Step 2: Departure Time */}
+        {/* الخطوة 2: وقت التحرك */}
         {step === 2 && (
           <div className="space-y-6 md:space-y-8 animate-fadeIn">
             <div className="text-center">
@@ -154,7 +154,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
           </div>
         )}
 
-        {/* Step 3: Bus Type */}
+        {/* الخطوة 3: نوع الحافلة */}
         {step === 3 && (
           <div className="space-y-6 md:space-y-8 animate-fadeIn">
             <div className="text-center">
@@ -193,7 +193,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
           </div>
         )}
 
-        {/* Step 4: Seat Selection */}
+        {/* الخطوة 4: اختيار المقاعد */}
         {step === 4 && (
           <div className="space-y-6 md:space-y-8 text-center animate-fadeIn">
              <div className="text-center">
@@ -201,14 +201,14 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
               <p className="text-sm md:text-gray-400 mt-2 font-medium">المقاعد الملونة بالأحمر محجوزة مسبقاً</p>
              </div>
 
-             {/* Bus Layout Design */}
+             {/* تصميم هيكل الحافلة */}
              <div className="relative inline-block mx-auto group/bus">
-               {/* Bus Body - Sleek Modern Design */}
+               {/* جسم الحافلة - تصميم عصري وأنيق */}
                <div className="bg-slate-50 border-[6px] border-slate-200 rounded-[4rem] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden">
-                 {/* Glassy Windshield Effect */}
+                 {/* تأثير الزجاج الأمامي */}
                  <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-100/30 to-transparent pointer-events-none"></div>
                  
-                 {/* Front Section with Driver & Steering Wheel */}
+                 {/* القسم الأمامي مع السائق وعجلة القيادة */}
                  <div className="flex justify-end items-center mb-12 pb-8 border-b-2 border-slate-100">
                    <div className="flex flex-col items-center gap-2">
                      <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-2xl md:text-3xl border-2 border-slate-200 shadow-sm relative overflow-hidden">
@@ -219,14 +219,14 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
                    </div>
                  </div>
 
-                 {/* Seats Grid with Corridor */}
+                 {/* شبكة المقاعد مع الممر */}
                  <div className="grid grid-cols-5 gap-y-6 md:gap-y-8">
-                   {/* Generate 10 rows of seats (40 seats total) */}
+                   {/* توليد 10 صفوف من المقاعد (إجمالي 40 مقعداً) */}
                    {Array.from({length: 10}, (_, row) => {
                      return [1, 2, 0, 3, 4].map((col, colIdx) => {
                        if (col === 0) return <div key={`aisle-${row}`} className="w-6 md:w-10 flex items-center justify-center">
                          <div className="w-0.5 h-full bg-slate-100/50 rounded-full"></div>
-                       </div>; // Corridor
+                       </div>; // الممر
                        
                        const seatNumber = row * 4 + col;
                        const isOccupied = occupiedSeats.includes(seatNumber);
@@ -241,12 +241,12 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
                              ${isOccupied ? 'bg-slate-100 border-slate-200 text-slate-300 cursor-not-allowed' : 
                                isSelected ? 'bg-blue-900 border-blue-900 text-white shadow-[0_10px_20px_rgba(30,58,138,0.3)] scale-110 z-10' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-500 hover:text-blue-600 hover:shadow-lg'}`}
                          >
-                           {/* Seat Headrest */}
+                           {/* مسند الرأس للمقعد */}
                            <div className={`absolute -top-1.5 w-1/2 h-2 rounded-t-lg ${isSelected ? 'bg-blue-800' : isOccupied ? 'bg-slate-200' : 'bg-slate-100'}`}></div>
                            
                            <span className="relative z-10">{seatNumber}</span>
                            
-                           {/* Seat Cushion Detail */}
+                           {/* تفاصيل وسادة المقعد */}
                            <div className={`mt-1 w-8 h-1 rounded-full ${isSelected ? 'bg-blue-400/50' : isOccupied ? 'bg-slate-200' : 'bg-slate-100'}`}></div>
                          </button>
                        );
@@ -254,13 +254,13 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
                    })}
                  </div>
 
-                 {/* Rear Engine/Back Area */}
+                 {/* منطقة المحرك الخلفية */}
                  <div className="mt-12 pt-8 border-t-2 border-slate-100 flex justify-center">
                     <div className="w-24 h-2 bg-slate-200 rounded-full opacity-50"></div>
                  </div>
                </div>
 
-               {/* Bus Wheels - More Detailed */}
+               {/* عجلات الحافلة - تفاصيل إضافية */}
                <div className="absolute -left-3 top-32 w-5 h-16 bg-slate-800 rounded-l-2xl border-r-4 border-slate-700 shadow-lg"></div>
                <div className="absolute -right-3 top-32 w-5 h-16 bg-slate-800 rounded-r-2xl border-l-4 border-slate-700 shadow-lg"></div>
                <div className="absolute -left-3 bottom-32 w-5 h-16 bg-slate-800 rounded-l-2xl border-r-4 border-slate-700 shadow-lg"></div>
@@ -282,7 +282,7 @@ const BookingFlow: React.FC<BookingFlowProps> = ({ onComplete, userId }) => {
           </div>
         )}
 
-        {/* Step 5: Payment */}
+        {/* الخطوة 5: الدفع */}
         {step === 5 && (
           <PaymentForm 
             amount={booking.selectedSeats.length * BUS_PRICES[booking.busType]} 

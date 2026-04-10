@@ -6,7 +6,8 @@ import { BUS_PRICES } from '../constants';
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const BackendAPI = {
-  // --- نظام الحسابات (Auth) ---
+  // --- نظام الحسابات وإدارة الجلسات ---
+  // دالة إنشاء حساب جديد مع التحقق من البريد الإلكتروني وصلاحيات المدير
   async signup(userData: any): Promise<{ success: boolean; user?: User; message?: string }> {
     await delay(800);
     const existing = await db.users.where('email').equals(userData.email).first();
@@ -25,11 +26,19 @@ export const BackendAPI = {
       loggedIn: true
     };
 
+    // حماية إضافية: التحقق من كود الأمان للمديرين
+    if (userData.role === UserRole.ADMIN) {
+      if (userData.securityKey !== '2026') {
+        return { success: false, message: 'كود تفعيل المدير غير صحيح' };
+      }
+    }
+
     await db.users.add({ ...newUser, password: userData.password });
     localStorage.setItem('taj_bus_current_session', JSON.stringify(newUser));
     return { success: true, user: newUser };
   },
 
+  // دالة تسجيل الدخول والتحقق من كلمة المرور
   async login(email: string, pass: string): Promise<{ success: boolean; user?: User; message?: string }> {
     await delay(800);
     const user = await db.users.where('email').equals(email).first();
@@ -42,16 +51,19 @@ export const BackendAPI = {
     return { success: false, message: 'بيانات الدخول غير صحيحة' };
   },
 
+  // تسجيل الخروج وحذف بيانات الجلسة من التخزين المحلي
   async logout() {
     localStorage.removeItem('taj_bus_current_session');
   },
 
+  // استعادة بيانات الجلسة الحالية عند فتح التطبيق
   async getSession(): Promise<User | null> {
     const session = localStorage.getItem('taj_bus_current_session');
     return session ? JSON.parse(session) : null;
   },
 
-  // --- نظام الحجز (Database Queries) ---
+  // --- نظام الحجز وإدارة المقاعد ---
+  // جلب المقاعد المحجوزة لرحلة معينة لمنع الحجز المزدوج
   async getOccupiedSeats(date: string, time: string, from: string, to: string): Promise<number[]> {
     const tickets = await db.tickets
       .where('date').equals(date)
@@ -61,6 +73,7 @@ export const BackendAPI = {
     return tickets.flatMap(t => t.selectedSeats);
   },
 
+  // إنشاء حجز جديد وتوليد تذكرة بعد التأكد من توفر المقاعد
   async createBooking(bookingData: BookingState, userId: string): Promise<{ success: boolean; ticket?: Ticket }> {
     await delay(1200);
     
@@ -86,11 +99,13 @@ export const BackendAPI = {
     return { success: true, ticket: newTicket };
   },
 
+  // جلب جميع تذاكر مستخدم معين لعرضها في سجل الرحلات
   async getUserTickets(userId: string): Promise<Ticket[]> {
     return await db.tickets.where('userId').equals(userId).reverse().toArray();
   },
 
-  // --- نظام الشكاوي (Complaints) ---
+  // --- نظام الشكاوي والمقترحات ---
+  // إرسال شكوى جديدة وحفظها في قاعدة البيانات بحالة "قيد الانتظار"
   async submitComplaint(complaintData: Omit<Complaint, 'id' | 'status' | 'createdAt'>): Promise<{ success: boolean; message: string }> {
     await delay(1000);
     const newComplaint: Complaint = {
@@ -106,11 +121,13 @@ export const BackendAPI = {
     return await db.complaints.where('userId').equals(userId).reverse().toArray();
   },
 
+  // جلب التذاكر المسندة لسائق معين لعرضها في لوحة تحكم السائق
   async getDriverTickets(driverId: string): Promise<Ticket[]> {
     return await db.tickets.where('driverId').equals(driverId).reverse().toArray();
   },
 
-  // --- نظام الإدارة (Admin) ---
+  // --- نظام الإدارة والتحكم ---
+  // جلب كافة التذاكر في النظام (للمدير فقط)
   async getAllTickets(): Promise<Ticket[]> {
     return await db.tickets.reverse().toArray();
   },
@@ -124,10 +141,11 @@ export const BackendAPI = {
     return true;
   },
 
+  // جلب قائمة السائقين مع إضافة بيانات أولية في حال كانت القاعدة فارغة (Seed Data)
   async getDrivers(): Promise<Driver[]> {
     const drivers = await db.drivers.toArray();
     if (drivers.length === 0) {
-      // Seed initial drivers if none exist
+      // إضافة سائقين افتراضيين لتجربة النظام لأول مرة
       const initialDrivers: Driver[] = [
         {
           id: 'dr-1',
@@ -211,11 +229,12 @@ export const BackendAPI = {
     await db.drivers.delete(id);
   },
 
+  // جلب بيانات سائق معين بواسطة المعرف الخاص به
   async getDriverById(id: string): Promise<Driver | null> {
     const driver = await db.drivers.get(id);
     if (driver) return driver;
     
-    // Check users table if not in drivers table (for drivers who signed up themselves)
+    // البحث في جدول المستخدمين في حال كان السائق قد سجل بنفسه ولم يضفه المدير يدوياً
     const user = await db.users.get(id);
     if (user && user.role === UserRole.DRIVER) {
       return {
@@ -230,22 +249,26 @@ export const BackendAPI = {
     return null;
   },
 
+  // تقييم الرحلة بعد اكتمالها وإضافة تعليق المستخدم
   async rateTicket(ticketId: string, rating: number, review: string): Promise<boolean> {
     await db.tickets.update(ticketId, { rating, review, status: 'completed' });
     return true;
   },
 
+  // إلغاء تذكرة وتغيير حالتها في النظام
   async cancelTicket(ticketId: string): Promise<boolean> {
     await delay(1000);
     await db.tickets.update(ticketId, { status: 'cancelled', paymentStatus: 'pending' });
     return true;
   },
 
+  // إسناد سائق لتذكرة فردية
   async assignDriverToTicket(ticketId: string, driverId: string, driverName: string, driverPhoto?: string): Promise<boolean> {
     await db.tickets.update(ticketId, { driverId, driverName, driverPhoto });
     return true;
   },
 
+  // إسناد سائق لرحلة كاملة (جميع التذاكر التي تشترك في نفس المسار والوقت)
   async assignDriverToTrip(from: string, to: string, date: string, time: string, busType: string, driverId: string, driverName: string, driverPhoto?: string): Promise<boolean> {
     const tickets = await db.tickets
       .where({ from, to, date, departureTime: time, busType })

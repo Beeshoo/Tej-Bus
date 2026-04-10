@@ -80,8 +80,9 @@ const App: React.FC = () => {
     setTickets(updatedTickets);
   };
 
+  // وضع علامة "مكتملة" على الرحلة (بدون تقييم حالياً)
   const handleMarkComplete = async (id: string) => {
-    await BackendAPI.rateTicket(id, 0, ''); // Just marks as completed without rating yet
+    await BackendAPI.rateTicket(id, 0, ''); 
     const updatedTickets = await BackendAPI.getUserTickets(user!.id);
     setTickets(updatedTickets);
   };

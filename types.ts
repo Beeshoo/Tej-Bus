@@ -39,7 +39,7 @@ export interface TripSchedule {
   id: string;
   departureTime: string;
   arrivalTime: string;
-  label: string; // صبحي، مسائي، إلخ
+  label: string; // تسمية الفترة: صبحي، مسائي، إلخ
 }
 
 export interface Ticket {

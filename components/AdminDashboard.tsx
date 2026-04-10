@@ -23,7 +23,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
   const refreshData = async () => {
     setLoading(true);
     const allData = await BackendAPI.getAllData();
-    // Fetch drivers from users table as well
+    // جلب السائقين من جدول المستخدمين أيضاً (في حال سجلوا بأنفسهم)
     const driverUsers = allData.users.filter(u => u.role === UserRole.DRIVER);
     const allDrivers = [...allData.drivers, ...driverUsers.map(u => ({
       id: u.id,
@@ -34,7 +34,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
       photoUrl: u.photoUrl
     }))];
     
-    // Deduplicate by ID
+    // إزالة التكرار بناءً على المعرف (ID)
     const uniqueDrivers = Array.from(new Map(allDrivers.map(d => [d.id, d]) ).values());
 
     setData({
@@ -83,7 +83,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-tajawal">
-      {/* Sidebar */}
+      {/* القائمة الجانبية (Sidebar) */}
       <aside className="w-full md:w-72 bg-blue-950 text-white flex flex-col shrink-0">
         <div className="p-8 border-b border-white/10">
           <div className="flex items-center gap-3 mb-2">
@@ -127,9 +127,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* المحتوى الرئيسي (Main Content) */}
       <main className="flex-grow p-6 md:p-10 overflow-auto">
-        {/* Header */}
+        {/* رأس الصفحة (Header) */}
         <header className="flex justify-between items-center mb-10">
           <div>
             <h2 className="text-3xl font-black text-blue-950">
@@ -148,7 +148,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
           </button>
         </header>
 
-        {/* Tab Content */}
+        {/* محتوى التبويبات (Tab Content) */}
         <div className="animate-fadeIn">
           {activeTab === 'overview' && (
             <div className="space-y-10">
@@ -265,7 +265,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {(() => {
-                        // Group tickets into unique trips
+                        // تجميع التذاكر في رحلات فريدة بناءً على المسار والوقت
                         const tripsMap = new Map<string, {
                           from: string, to: string, date: string, time: string, busType: string, 
                           passengers: number, driverId?: string, driverName?: string
