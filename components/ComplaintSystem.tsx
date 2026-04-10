@@ -1,20 +1,24 @@
 
 import React, { useState } from 'react';
-import { analyzeComplaint } from '../services/geminiService';
 
 const ComplaintSystem: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [desc, setDesc] = useState('');
-  const [aiResp, setAiResp] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setAiResp(null);
-    const res = await analyzeComplaint(subject, desc);
-    setAiResp(res);
+    setSuccess(false);
+    
+    // محاكاة إرسال الشكوى إلى الإدارة
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setSuccess(true);
     setLoading(false);
+    setSubject('');
+    setDesc('');
   };
 
   return (
@@ -26,7 +30,7 @@ const ComplaintSystem: React.FC = () => {
           </div>
           <div>
             <h2 className="text-2xl md:text-3xl font-black text-blue-900">هل واجهت مشكلة؟</h2>
-            <p className="text-sm md:text-base text-gray-400 font-medium">سجل شكواك وسيقوم نظامنا الذكي بمراجعتها فوراً</p>
+            <p className="text-sm md:text-base text-gray-400 font-medium">سجل شكواك وسيقوم فريق الدعم بمراجعتها في أقرب وقت</p>
           </div>
         </div>
 
@@ -62,7 +66,7 @@ const ComplaintSystem: React.FC = () => {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                جاري التحليل بالذكاء الاصطناعي...
+                جاري الإرسال...
               </>
             ) : (
               'إرسال الشكوى الآن'
@@ -70,15 +74,12 @@ const ComplaintSystem: React.FC = () => {
           </button>
         </form>
 
-        {aiResp && (
-          <div className="mt-10 p-6 bg-blue-50 border border-blue-100 rounded-[2rem] animate-popIn relative">
-            <div className="absolute -top-3 right-6 bg-blue-600 text-white text-xs md:text-sm px-4 py-1.5 rounded-full font-black uppercase tracking-widest">
-              رد ذكي فوري
+        {success && (
+          <div className="mt-10 p-6 bg-green-50 border border-green-100 rounded-[2rem] animate-popIn relative">
+            <div className="absolute -top-3 right-6 bg-green-600 text-white text-xs md:text-sm px-4 py-1.5 rounded-full font-black uppercase tracking-widest">
+              تم الإرسال بنجاح
             </div>
-            <p className="text-blue-900 text-base md:text-lg leading-relaxed whitespace-pre-wrap">{aiResp}</p>
-            <div className="mt-4 flex justify-end">
-              <span className="text-xs text-blue-400 font-bold italic">خدمة العملاء الآلية - تاج باص</span>
-            </div>
+            <p className="text-green-900 text-base md:text-lg leading-relaxed">شكراً لك، لقد تم استلام شكواك بنجاح. سيقوم فريق خدمة العملاء بمراجعتها والرد عليك في أقرب وقت ممكن.</p>
           </div>
         )}
       </div>
