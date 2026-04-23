@@ -520,21 +520,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ admin, onLogout, onNavi
                     </button>
                   </form>
                 </div>
-                
-                {data.drivers.length < 5 && (
-                  <div className="bg-amber-50 p-8 rounded-[2.5rem] border-2 border-dashed border-amber-200 flex flex-col items-center justify-center text-center min-w-[250px]">
-                    <p className="text-amber-800 font-black mb-4 text-sm">هل تريد إضافة سائقين افتراضيين؟</p>
-                    <button 
-                      onClick={async () => {
-                        await BackendAPI.getDrivers();
-                        refreshData();
-                      }}
-                      className="bg-amber-500 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs shadow-lg shadow-amber-500/20 hover:scale-105 transition-all"
-                    >
-                      تعبئة السائقين (Seed)
-                    </button>
-                  </div>
-                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
