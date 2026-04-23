@@ -92,7 +92,7 @@ export interface ChatMessage {
   id?: number;
   userId: string;
   userName: string;
-  sender: 'user' | 'admin' | 'bot';
+  sender: 'user' | 'admin' | 'system';
   text: string;
   timestamp: string;
   isRead?: boolean;
